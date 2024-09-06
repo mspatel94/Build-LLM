@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import torch
 import tiktoken
 import self_attention
+import tokenizer
 
 @dataclass
 class GPTConfig:
@@ -90,18 +91,14 @@ class GPT(torch.nn.Module):
     
     def generate_simple_text(self, prefix:torch.Tensor, max_len:int=10):
         output = torch.Tensor([]).to(torch.int32)
-        input = prefix
+        input = prefix[0]
         for i in range(max_len):
             logits = self.forward(input[-self.cfg.seq_len:].view(1, -1))
             next_pred = logits[:,-1, :]
-            print(next_pred.shape)
             next_pred = torch.softmax(next_pred, dim=-1)
             index = next_pred.argmax(dim=1, keepdims=True)
-            print("index",index, index[0])
             input=torch.cat([input, index[0]], dim=0)
             output=torch.cat([output, index[0]], dim=0)
-            print(input)
-            print("outout", output)
         return output
 
 if __name__=="__main__":
@@ -117,6 +114,7 @@ if __name__=="__main__":
     print(input)
     output = model(input)
     print(output, output.shape)
-    text_output = model.generate_simple_text(a_tensor)
+    text_output = model.generate_simple_text(tokenizer.text_to_token_id(encoder,a))
+    print("input:", a, "output:", tokenizer.tokens_id_to_text(encoder,text_output))
     print(f"input: {a}, output: {encoder.decode(text_output.squeeze(0).tolist())}")
 

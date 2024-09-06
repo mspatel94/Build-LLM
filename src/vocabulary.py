@@ -1,7 +1,8 @@
 from collections import defaultdict
+from typing import List
 
 class Vocabulary:
-    def __init__(self, tokens:list[str], max_size=None):
+    def __init__(self, tokens:List[str], max_size=None):
         self.max_size = max_size
         self.token_to_id = {}
         self.id_to_token = {}
@@ -9,7 +10,7 @@ class Vocabulary:
         self.token_to_count = defaultdict(int)
         self._build(tokens)
     
-    def _build(self, tokens=list[str])->None:
+    def _build(self, tokens=List[str])->None:
         for token in tokens:
             self.token_to_count[token]+=1
         
@@ -25,7 +26,7 @@ class Vocabulary:
                 self.id_to_token[counter]=token
                 counter+=1
         
-    def encode(self, tokens:list[str])->list[int]:
+    def encode(self, tokens:List[str])->List[int]:
         encoded_tokens = []
 
         for token in tokens:
@@ -36,7 +37,7 @@ class Vocabulary:
             
         return encoded_tokens
     
-    def decode(self, ids:list[int])->list[str]:
+    def decode(self, ids:List[int])->List[str]:
         decoded_tokens = []
 
         for id in ids:

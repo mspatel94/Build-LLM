@@ -2,7 +2,7 @@ import os
 from abc import ABC, abstractmethod
 import re
 import vocabulary
-from typing import Any
+from typing import Any, List
 import torch
 
 DATA_FILE = f"{os.path.dirname(os.path.realpath(__file__))}/../data/verdict.txt"
@@ -19,7 +19,7 @@ class WordTokenizer(Tokenizer):
     def __init__(self, split_punctuation=True):
         self._split_punctuation=split_punctuation
     
-    def _remove_empty_str(self, data:list[str])->list[str]:
+    def _remove_empty_str(self, data:List[str])->List[str]:
         return [item for item in data if item.strip()]
     
     def tokenize(self, data:str):
@@ -39,10 +39,10 @@ class TokenizerFactory:
 
 def text_to_token_id(tokenizer:Any, text:str)->torch.Tensor:
     tokens = tokenizer.encode(text)
-    return torch.unsqueeze(tokens, dim=0)
+    return torch.unsqueeze(torch.tensor(tokens), dim=0)
 
 def tokens_id_to_text(tokenizer:Any, tokens:torch.Tensor)->str:
-    text = tokenizer.decode(torch.squeeze(tokens))
+    text = tokenizer.decode(torch.squeeze(tokens).tolist())
     return text
 
 if __name__=="__main__":
