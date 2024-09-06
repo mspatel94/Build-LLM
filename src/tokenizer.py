@@ -2,6 +2,8 @@ import os
 from abc import ABC, abstractmethod
 import re
 import vocabulary
+from typing import Any
+import torch
 
 DATA_FILE = f"{os.path.dirname(os.path.realpath(__file__))}/../data/verdict.txt"
 
@@ -35,6 +37,13 @@ class TokenizerFactory:
         else:
             raise Exception("Not valid tokenizer asked")
 
+def text_to_token_id(tokenizer:Any, text:str)->torch.Tensor:
+    tokens = tokenizer.encode(text)
+    return torch.unsqueeze(tokens, dim=0)
+
+def tokens_id_to_text(tokenizer:Any, tokens:torch.Tensor)->str:
+    text = tokenizer.decode(torch.squeeze(tokens))
+    return text
 
 if __name__=="__main__":
     data = read_file(DATA_FILE)
